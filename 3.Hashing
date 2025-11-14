@@ -1,0 +1,141 @@
+#include <stdio.h>
+
+int hashtable[10];
+
+//LINEAR PROBING
+void insert_linear(int key) {
+    int i = 1;
+    int index = key % 10;
+    int original_index = index;
+
+    while (hashtable[index] != -1) {
+        index = (original_index + i) % 10;
+        i++;
+        if (i == 10) {
+            printf("Hash table is full. Cannot insert %d\n", key);
+            return;
+        }
+    }
+    hashtable[index] = key;
+    printf("Inserted %d at index %d (Linear Probing)\n", key, index);
+}
+
+//QUADRATIC PROBING 
+void insert_quadratic(int key) {
+    int i = 1;
+    int index = key % 10;
+    int original_index = index;
+
+    while (hashtable[index] != -1) {
+        index = (original_index + i * i) % 10;
+        i++;
+        if (i == 10) {
+            printf("Hash table is full. Cannot insert %d\n", key);
+            return;
+        }
+    }
+    hashtable[index] = key;
+    printf("Inserted %d at index %d (Quadratic Probing)\n", key, index);
+}
+
+//DOUBLE HASHING
+void insert_double(int key) {
+    int i = 0;
+    int index = key % 10;
+    int original_index = index;
+    int h = 7 - (key % 7); // secondary hash
+
+    while (hashtable[index] != -1) {
+        i++;
+        index = (original_index + i * h) % 10;
+        if (i == 10) {
+            printf("Hash table is full. Cannot insert %d\n", key);
+            return;
+        }
+    }
+    hashtable[index] = key;
+    printf("Inserted %d at index %d (Double Hashing)\n", key, index);
+}
+
+//DISPLAY
+void display() {
+    printf("\nYour Hash Table:\n");
+    printf("Index\tKeyValue\n");
+    for (int i = 0; i < 10; i++) {
+        printf("%d\t%d\n", i, hashtable[i]);
+    }
+}
+
+//SEARCH
+int search(int key) {
+    for (int i = 0; i < 10; i++) {
+        if (hashtable[i] == key)
+            return i;
+    }
+    return -1;
+}
+
+//MAIN
+int main() {
+    int choice, key, method, pos;
+
+    // Initialize hash table
+    for (int i = 0; i < 10; i++) {
+        hashtable[i] = -1;
+    }
+
+    printf("Select Collision Handling Method:\n");
+    printf("1. Linear Probing\n");
+    printf("2. Quadratic Probing\n");
+    printf("3. Double Hashing\n");
+    printf("Enter your choice: ");
+    scanf("%d", &method);
+
+    do {
+        printf("\n---- MENU ----\n");
+        printf("1. Insert\n");
+        printf("2. Display\n");
+        printf("3. Search\n");
+        printf("4. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("Enter the element: ");
+                scanf("%d", &key);
+                if (method == 1)
+                    insert_linear(key);
+                else if (method == 2)
+                    insert_quadratic(key);
+                else if (method == 3)
+                    insert_double(key);
+                else
+                    printf("Invalid method!\n");
+                break;
+
+            case 2:
+                display();
+                break;
+
+            case 3:
+                printf("Enter the search key: ");
+                scanf("%d", &key);
+                pos = search(key);
+                if (pos == -1)
+                    printf("Key not found.\n");
+                else
+                    printf("Key found at position %d.\n", pos);
+                break;
+
+            case 4:
+                printf("Exiting...\n");
+                break;
+
+            default:
+                printf("Invalid choice. Try again.\n");
+        }
+    } while (choice != 4);
+
+    return 0;
+}
