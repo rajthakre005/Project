@@ -1,0 +1,93 @@
+//FOR SELECTION AND BUBBLE SORTS
+#include<stdio.h>
+//Declare function of bubble
+void bubble(int n, int per[])
+{
+    for(int i=0;i<n-1;i++)
+    {
+        for(int j=0;j<n-i-1;j++)
+        {
+            if(per[j]>per[j+1])
+            {
+                //Swap
+                float temp;
+                temp = per[j];
+                per[j]=per[j+1];
+                per[j+1]=temp;
+            }
+        }
+    }
+}
+void selection(int n, float per[])//Selection sort
+{
+    int i,j,min;
+    float temp;
+    for(i=0;i<n-1;i++)
+    {
+        min = i;
+        for(j=i+1;j<n;j++)
+        {
+            if(per[j]<per[min])
+            {
+                min = j;
+            }
+        }
+        //Swap element
+        temp = per[i];
+        per[i]=per[min];
+        per[min]=temp;
+    }
+}
+void display(int n,float per[])
+{
+    printf("Sorted Percentage\n");
+    for(int i=0;i<n;i++)
+    {
+        printf("%.2f%%",per[i]);
+    }
+    printf("\n Top percentage\n");
+    if(n < 5)
+    {
+        for(int i=n-1;i>=0;i--)
+        {
+            printf("%.2f%%",per[i]);
+        }
+
+    }    else
+        {
+            //Print only Top 5
+            for(int i = n - 1;i>=n-5;i--)
+            {
+                printf("%.2f%%",per[i]);
+            }
+        }
+        printf("\n");
+    }
+void user(int n,float per[])
+{
+    printf("Enter first year score:\n");
+    for(int i=0;i<n;i++)
+    {
+        scanf("%f",&per[i]);
+    }
+}
+//main
+int main()
+{
+    int n;
+    printf("Enter the size of students");
+    scanf("%d",&n);
+    //display user
+    float per[n];
+    user(n,per);
+    //call function of display
+    printf("\n Bubble Sort \n");
+    bubble(n,per);
+    display(n,per);
+    //for selection
+    printf("\n Selection Sort\n");
+    selection(n,per);
+    display(n,per);
+
+    return 0;
+}
