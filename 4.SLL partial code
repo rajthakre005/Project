@@ -1,0 +1,137 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct node {
+    char name[50];
+    int prn;
+    struct node *next;
+};
+
+struct node *head = NULL;
+
+// Function to add President details
+void president() {
+    struct node *newNode = (struct node *)malloc(sizeof(struct node));
+    printf("Enter PRN of club President: ");
+    scanf("%d", &newNode->prn);
+    printf("Enter club President Name: ");
+    scanf("%s", newNode->name);
+
+    newNode->next = head;
+    head = newNode;
+}
+
+// Function to add Secretary details
+void secretary() {
+    struct node *newNode, *temp;
+    newNode = (struct node *)malloc(sizeof(struct node));
+    printf("Enter PRN of club Secretary: ");
+    scanf("%d", &newNode->prn);
+    printf("Enter club Secretary Name: ");
+    scanf("%s", newNode->name);
+
+    temp = head;
+    while (temp->next != NULL) {
+        temp = temp->next;
+    }
+    newNode->next = NULL;
+    if (head == NULL) {
+        head = newNode;
+    } else {
+        temp->next = newNode;
+    }
+}
+
+// Function to add Member details
+void member() {
+    struct node *newNode, *temp, *prev;
+    newNode = (struct node *)malloc(sizeof(struct node));
+    printf("Enter PRN of club Member: ");
+    scanf("%d", &newNode->prn);
+    printf("Enter club Member Name: ");
+    scanf("%s", newNode->name);
+
+    temp = head;
+    while (temp->next != NULL) {
+        prev = temp;
+        temp = temp->next;
+    }
+
+    newNode->next = temp;
+    prev->next = newNode;
+}
+
+// Function to display all members
+void display() {
+    struct node *temp = head;
+    if (temp == NULL) {
+        printf("No members to display.\n");
+        return;
+    }
+
+    printf("Details of all members of club:\n");
+    while (temp != NULL) {
+        printf("%d , %s -> ", temp->prn, temp->name);
+        temp = temp->next;
+    }
+    printf("NULL \n");
+}
+
+// Function to count total members in club
+int totalMembers() {
+    struct node *temp = head;
+    int count = 0;
+    while (temp != NULL) {
+        count++;
+        temp = temp->next;
+    }
+    printf("Total members in club are: %d\n", count);
+    return count;
+}
+
+// Main function
+int main() {
+    int choice;
+    do {
+        printf("\n..Club_Menu:..\n");
+        printf("1. Add President Details\n");
+        printf("2. Add Secretary Details\n");
+        printf("3. Add Member Details\n");
+        printf("4. Display All Members of club\n");
+        printf("5. Total Members in club\n");
+        printf("6. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                president();
+                break;
+            case 2:
+                secretary();
+                break;
+            case 3:
+                member();
+                break;
+            case 4:
+                display();
+                break;
+            case 5:
+                totalMembers();
+                break;
+            case 6:
+                printf("Exiting...\n");
+                break;
+            default:
+                printf("Invalid choice! Please try again.\n");
+        }
+    } while (choice != 6);
+
+    struct node *temp;
+    while (head != NULL) {
+        temp = head;
+        head = head->next;
+        free(temp);
+    }
+    return 0;
+}
