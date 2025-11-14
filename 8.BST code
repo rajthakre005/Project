@@ -1,18 +1,24 @@
-include <stdio.h>
- #include <stdlib.h>
- struct Node {
+#include <stdio.h>
+#include <stdlib.h>
+
+// Node structure
+struct Node {
     int data;
     struct Node* left;
     struct Node* right;
- };
- struct Node* createNode(int value) {
+};
+
+// Function to create a new node
+struct Node* createNode(int value) {
     struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
     newNode->data = value;
     newNode->left = NULL;
     newNode->right = NULL;
     return newNode;
- }
- struct Node* insert(struct Node* root, int value) {
+}
+
+// Insert a node in BST
+struct Node* insert(struct Node* root, int value) {
     if (root == NULL) {
         return createNode(value);
     }
@@ -22,8 +28,10 @@ include <stdio.h>
         root->right = insert(root->right, value);
     }
     return root;
- }
- int search(struct Node* root, int key) {
+}
+
+// Search a key in BST
+int search(struct Node* root, int key) {
     if (root == NULL)
         return 0;
     if (root->data == key)
@@ -32,20 +40,27 @@ include <stdio.h>
         return search(root->left, key);
     else
         return search(root->right, key);
- }
- int findMin(struct Node* root) {
+}
+
+// Find minimum value in BST
+int findMin(struct Node* root) {
     struct Node* current = root;
     while (current && current->left != NULL)
         current = current->left;
     return current->data;
- }
- int findHeight(struct Node* root) {
+}
+
+// Find height of BST
+int findHeight(struct Node* root) {
     if (root == NULL)
         return 0;
     int leftHeight = findHeight(root->left);
     int rightHeight = findHeight(root->right);
     return (leftHeight > rightHeight ? leftHeight : rightHeight) + 1;
- void mirror(struct Node* root) {
+}
+
+// Mirror the BST
+void mirror(struct Node* root) {
     if (root == NULL)
         return;
     mirror(root->left);
@@ -53,37 +68,49 @@ include <stdio.h>
     struct Node* temp = root->left;
     root->left = root->right;
     root->right = temp;
- }
- void inorder(struct Node* root) {
+}
+
+// Inorder traversal
+void inorder(struct Node* root) {
     if (root == NULL)
         return;
     inorder(root->left);
     printf("%d ", root->data);
     inorder(root->right);
- }
- int main() {
+}
+
+// Main function
+int main() {
     struct Node* root = NULL;
+
     int values[] = {50, 30, 70, 20, 40, 60, 80};
-    int n = sizeof(values)/sizeof(values[0]);
+    int n = sizeof(values) / sizeof(values[0]);
     for (int i = 0; i < n; i++) {
         root = insert(root, values[i]);
     }
+
     root = insert(root, 25);
+
     printf("Inorder Traversal before mirror:\n");
     inorder(root);
     printf("\n");
+
     int height = findHeight(root);
     printf("Height of tree: %d\n", height);
+
     int minValue = findMin(root);
     printf("Minimum value in BST: %d\n", minValue);
+
     mirror(root);
     printf("Inorder Traversal after mirror:\n");
     inorder(root);
     printf("\n");
+
     int key = 60;
-    if(search(root, key))
+    if (search(root, key))
         printf("Search %d: Found\n", key);
     else
         printf("Search %d: Not Found\n", key);
+
     return 0;
 }
