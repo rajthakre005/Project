@@ -1,0 +1,166 @@
+#include <stdio.h>
+#include <stdlib.h>
+#define MAX 10
+
+// ADJACENCY MATRIX SECTION
+int adj[MAX][MAX];
+int visitedM[MAX];
+int n;
+
+void createGraphMatrix() {
+    int i, j, edges, src, dest;
+    printf("\nEnter number of cities (vertices): ");
+    scanf("%d", &n);
+    printf("Enter number of flight paths (edges): ");
+    scanf("%d", &edges);
+    for (i = 0; i < n; i++)
+        for (j = 0; j < n; j++)
+            adj[i][j] = 0;
+    printf("Enter edges (source destination):\n");
+    for (i = 0; i < edges; i++) {
+        scanf("%d %d", &src, &dest);
+        adj[src][dest] = 1;
+        adj[dest][src] = 1; // Undirected
+    }
+}
+
+void DFSMatrix(int v) {
+    visitedM[v] = 1;
+    for (int i = 0; i < n; i++) {
+        if (adj[v][i] == 1 && visitedM[i] == 0)
+            DFSMatrix(i);
+    }
+}
+
+int isConnectedMatrix() {
+    for (int i = 0; i < n; i++)
+        visitedM[i] = 0;
+    DFSMatrix(0);
+    for (int i = 0; i < n; i++) {
+        if (visitedM[i] == 0)
+            return 0;
+    }
+    return 1;
+}
+
+void displayMatrix() {
+    printf("\nAdjacency Matrix:\n");
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++)
+            printf("%d ", adj[i][j]);
+        printf("\n");
+    }
+}
+
+// ADJACENCY LIST SECTION
+struct Node {
+    int vertex;
+    struct Node* next;
+};
+
+struct Graph {
+    int numVertices;
+    struct Node** adjLists;
+    int* visited;
+};
+
+struct Node* createNode(int v) {
+    struct Node* newNode = malloc(sizeof(struct Node));
+    newNode->vertex = v;
+    newNode->next = NULL;
+    return newNode;
+}
+
+struct Graph* createGraph(int vertices) {
+    struct Graph* graph = malloc(sizeof(struct Graph));
+    graph->numVertices = vertices;
+    graph->adjLists = malloc(vertices * sizeof(struct Node*));
+    graph->visited = malloc(vertices * sizeof(int));
+    for (int i = 0; i < vertices; i++) {
+        graph->adjLists[i] = NULL;
+        graph->visited[i] = 0;
+    }
+    return graph;
+}
+
+void addEdge(struct Graph* graph, int src, int dest) {
+    struct Node* newNode = createNode(dest);
+    newNode->next = graph->adjLists[src];
+    graph->adjLists[src] = newNode;
+
+    newNode = createNode(src);
+    newNode->next = graph->adjLists[dest];
+    graph->adjLists[dest] = newNode;
+}
+
+void DFSList(struct Graph* graph, int vertex) {
+    struct Node* adjList = graph->adjLists[vertex];
+    struct Node* temp = adjList;
+    graph->visited[vertex] = 1;
+    while (temp != NULL) {
+        int connectedVertex = temp->vertex;
+        if (graph->visited[connectedVertex] == 0)
+            DFSList(graph, connectedVertex);
+        temp = temp->next;
+    }
+}
+
+int isConnectedList(struct Graph* graph) {
+    DFSList(graph, 0);
+    for (int i = 0; i < graph->numVertices; i++) {
+        if (graph->visited[i] == 0)
+            return 0;
+    }
+    return 1;
+}
+
+void printGraph(struct Graph* graph) {
+    for (int v = 0; v < graph->numVertices; v++) {
+        struct Node* temp = graph->adjLists[v];
+        printf("\nAdjacency list of vertex %d:\n ", v);
+        while (temp) {
+            printf("%d -> ", temp->vertex);
+            temp = temp->next;
+        }
+        printf("NULL\n");
+    }
+}
+
+// MAIN FUNCTION
+int main() {
+    int choice;
+    printf("\n--- Flight Path Representation ---\n");
+    printf("1. Using Adjacency Matrix\n");
+    printf("2. Using Adjacency List\n");
+    printf("Enter your choice: ");
+    scanf("%d", &choice);
+
+    if (choice == 1) {
+        createGraphMatrix();
+        displayMatrix();
+        if (isConnectedMatrix())
+            printf("\nThe flight graph is CONNECTED.\n");
+        else
+            printf("\nThe flight graph is NOT CONNECTED.\n");
+    } else if (choice == 2) {
+        int V, E, src, dest;
+        printf("Enter number of cities (vertices): ");
+        scanf("%d", &V);
+        struct Graph* graph = createGraph(V);
+        printf("Enter number of flight paths (edges): ");
+        scanf("%d", &E);
+        for (int i = 0; i < E; i++) {
+            printf("Enter edge (src dest): ");
+            scanf("%d %d", &src, &dest);
+            addEdge(graph, src, dest);
+        }
+        printGraph(graph);
+        if (isConnectedList(graph))
+            printf("\nThe flight graph is CONNECTED.\n");
+        else
+            printf("\nThe flight graph is NOT CONNECTED.\n");
+    } else {
+        printf("Invalid choice!");
+    }
+    return 0;
+}
